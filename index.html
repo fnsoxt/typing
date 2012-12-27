@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>follow typing</title>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <style type="text/css">
+      .right{color:green;}
+      .wrong{color:red;}
+      #ipt{width:1px;position:absolute;height:16px;border:none;}
+      #ipt:focus{border-color:red;border:none;}
+    </style>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $.getJSON('str.json', function(data) {
+          var items = [];
+          $.each(data, function(name, str) {
+            $("#name").html(name);
+            $.each(str,function(id,word){
+              if(word == "\r") items.push('<br>');
+              else if(word == " " || word == "\n") items.push(word);
+              else items.push('<span>' + word + '</span>');
+            })
+            });
+          $("#content").html(items.join(""));
+          posIpt(0);
+        });
+
+        current = 0;
+        ipt =$("#ipt")[0]; 
+        cha = $("#content span").eq(current);
+
+        addEvent(ipt,'textInput',function(e){
+          e = e || window.event;
+          cha = $("#content span").slice(current,current+e.data.length);
+          //          console.log(current,e.data,e.data.length,cha,cha.text());
+          if(e.data == cha.text()){
+            cha.addClass("right");
+          }
+          else{
+            cha.addClass("wrong");
+          }
+          current += e.data.length;
+          posIpt(current);
+        });
+
+        $("#ipt").keydown(function (event) {
+          var keycode = event.which;
+          if (keycode == 8){
+            current--;
+            if(current<0)
+              current = 0;
+            cha = $("#content span").eq(current);
+            cha.removeClass("right wrong");
+            posIpt(current);
+          }
+        });
+        $("#content").click(function(){
+          $('#ipt').focus();
+        });
+      });
+
+      function addEvent(el,type,fn){
+        if(el.addEventListener){
+          el.addEventListener(type, fn, false);
+        }
+        else{
+          el.attachEvent('on' + type, fn);
+        }       
+      }
+      function posIpt(current){
+        //        console.log(current,cha.offset().top,cha.offset().left);
+        cha = $("#content span").eq(current);
+        $('#ipt').css({"top":cha.offset().top,"left":cha.offset().left});
+        $('#ipt').focus();
+      }
+    </script>
+  </head>
+  <body>
+    <div id="name"></div>
+    <div id="content"></div>
+    <input id="ipt" type="text" />
+  </body>
+</html>

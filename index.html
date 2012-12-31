@@ -4,11 +4,17 @@
     <meta charset="UTF-8">
     <title>follow typing</title>
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="jquery.cookie.js"></script>
     <style type="text/css">
-      .right{color:green;}
-      .wrong{color:red;}
+      .right{background-color:green;}
+      .wrong{background-color:red;}
       #ipt{width:1px;position:absolute;height:16px;border:none;}
       #ipt:focus{border-color:red;border:none;}
+      body{margin:0 auto;width:960px;}
+      #content{overflow:auto;font-size:24px;}
+      #content span,#content div{float:left;}
+      #content div{clear:both;}
+      #name{text-align:center;}
     </style>
     <script type="text/javascript">
       $(document).ready(function(){
@@ -17,23 +23,21 @@
           $.each(data, function(name, str) {
             $("#name").html(name);
             $.each(str,function(id,word){
-              if(word == "\r") items.push('<br>');
-              else if(word == " " || word == "\n") items.push(word);
+              if(word == "\r") items.push('<div><br></div>');
+              else if(word == " " || word == "\n") ;
               else items.push('<span>' + word + '</span>');
             })
             });
           $("#content").html(items.join(""));
-          posIpt(0);
+          posIpt($.cookie('current') | 0);
         });
 
-        current = 0;
+        current = $.cookie('current') | 0;
         ipt =$("#ipt")[0]; 
-        cha = $("#content span").eq(current);
 
         addEvent(ipt,'textInput',function(e){
           e = e || window.event;
           cha = $("#content span").slice(current,current+e.data.length);
-          //          console.log(current,e.data,e.data.length,cha,cha.text());
           if(e.data == cha.text()){
             cha.addClass("right");
           }
@@ -42,6 +46,7 @@
           }
           current += e.data.length;
           posIpt(current);
+          $.cookie('current', current,{ expires: 365, path: '/'});
         });
 
         $("#ipt").keydown(function (event) {
@@ -53,6 +58,7 @@
             cha = $("#content span").eq(current);
             cha.removeClass("right wrong");
             posIpt(current);
+            $.cookie('current', current,{ expires: 365, path: '/'});
           }
         });
         $("#content").click(function(){
@@ -69,7 +75,6 @@
         }       
       }
       function posIpt(current){
-        //        console.log(current,cha.offset().top,cha.offset().left);
         cha = $("#content span").eq(current);
         $('#ipt').css({"top":cha.offset().top,"left":cha.offset().left});
         $('#ipt').focus();
@@ -77,7 +82,7 @@
     </script>
   </head>
   <body>
-    <div id="name"></div>
+    <h1 id="name"></h1>
     <div id="content"></div>
     <input id="ipt" type="text" />
   </body>

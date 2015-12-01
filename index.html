@@ -38,12 +38,13 @@
         addEvent(ipt,'textInput',function(e){
           e = e || window.event;
           cha = $("#content span").slice(current,current+e.data.length);
-          if(e.data == cha.text()){
-            cha.addClass("right");
-          }
-          else{
-            cha.addClass("wrong");
-          }
+          $.each(e.data.split(''),function(key,value){
+              var one = $(cha[key]);
+              if(value === one.text())
+                one.addClass("right");
+              else
+                one.addClass("wrong");
+          });
           current += e.data.length;
           posIpt(current);
           $.cookie('current', current,{ expires: 365, path: '/'});

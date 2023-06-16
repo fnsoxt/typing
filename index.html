@@ -18,7 +18,21 @@
     </style>
     <script type="text/javascript">
       $(document).ready(function(){
-        $.getJSON('dizang.json', function(data) {
+        jQuery.extend({
+            urlParams: function() {
+                var params = {};
+                var e, a = /\+/g,  // Regex for replacing addition symbol with a space
+                r = /([^&=]+)=?([^&]*)/g,
+                d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+                q = window.location.search.substring(1);
+                while (e = r.exec(q))
+                    params[d(e[1])] = d(e[2]);
+                return params;
+            }
+        });
+        source = jQuery.urlParams().source || 'dizang';
+        filename = source + '.json';
+        $.getJSON(filename, function(data) {
           var items = [];
           $.each(data, function(name, str) {
             $("#name").html(name);
@@ -33,7 +47,7 @@
         });
 
         current = $.cookie('current') | 0;
-        ipt =$("#ipt")[0]; 
+        ipt =$("#ipt")[0];
 
         addEvent(ipt,'textInput',function(e){
           e = e || window.event;
@@ -73,7 +87,7 @@
         }
         else{
           el.attachEvent('on' + type, fn);
-        }       
+        }
       }
       function posIpt(current){
         cha = $("#content span").eq(current);

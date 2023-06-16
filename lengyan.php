@@ -122,4 +122,4 @@ $str = <<<EOF
 虎合牛　都嚧瓮泮　莎婆诃
 EOF;
 $ar = mb_str_split($str);
-echo json_encode($ar, JSON_UNESCAPED_UNICODE);
+echo json_encode(['楞严咒' => $ar], JSON_UNESCAPED_UNICODE);

@@ -31,7 +31,7 @@
             }
         });
         source = jQuery.urlParams().source || 'dizang';
-        filename = source + '.json';
+        filename = 'source/' + source + '.json';
         $.getJSON(filename, function(data) {
           var items = [];
           $.each(data, function(name, str) {
